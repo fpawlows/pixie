@@ -11,9 +11,7 @@ import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 @Composable
 fun HomeScreen(posts: List<Post> = AllPosts) {
     //TODO: Display all posts as list
-    TopAppBar() {
-        
-    }
+
     PostCard(post = posts.first())
 }
 

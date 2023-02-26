@@ -109,6 +109,7 @@ fun reactionsNumbersRow(post: Post) {
         verticalAlignment = Alignment.CenterVertically
     ) {
 
+        //TODO make it fully alligned to the edge
         TextButton(onClick = {}, contentPadding = PaddingValues(0.dp))
         {
             Icon(
@@ -141,20 +142,25 @@ fun commentsList(post: Post, showNComments: Int = 2) {
     val firstComments = post.comments.subList(0, if (showNComments>post.comments.size) post.comments.size else showNComments)
 
     Column(
+        modifier = Modifier
+            .padding(horizontal = 8.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.Start,
     ) {
 
         if (firstComments.isNotEmpty()) {
             firstComments.forEach { comment ->
-                Row() {
+                Row(
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     Text(text = comment.author.name)
                     Text(text = comment.message)
                 }
             }
         }
         if (post.comments.size > 2) {
-            TextButton(onClick = {}) {
+            TextButton(onClick = {}, contentPadding = PaddingValues(0.dp)) {
                 Text(text = "Show all ${post.comments.size} Comments")
             }
         }
