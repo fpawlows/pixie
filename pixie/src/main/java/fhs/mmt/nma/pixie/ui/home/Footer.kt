@@ -1,5 +1,6 @@
 package fhs.mmt.nma.pixie.ui.home
 
+import androidx.annotation.StringRes
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -7,6 +8,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
+
+/*
+sealed class BottomNavigationScreens(val route: String, @StringRes val resourceId: Int, val icon: ImageVector) {
+    object Home : BottomNavigationScreens("Home", , Icons.Filled.Home)
+}
+*/
 
 @Composable
 fun footer(bottomBarNavigation: Map<String, () -> Unit> = mapOf("Home" to {})) {
