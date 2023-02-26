@@ -1,9 +1,11 @@
 package fhs.mmt.nma.pixie.ui.home
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
@@ -98,11 +100,13 @@ fun reactionsFooter(post: Post) {
 @Composable
 fun reactionsNumbersRow(post: Post) {
     Row(
+        //TODO its not always directly next to the edge
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .padding(vertical = 24.dp, horizontal = 16.dp)
             .fillMaxWidth()
-            .height(24.dp)
+            .height(24.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
         TextButton(onClick = {}, contentPadding = PaddingValues(0.dp))
@@ -132,10 +136,30 @@ fun reactionsNumbersRow(post: Post) {
 
 
 @Composable
-fun commentsList(post: Post) {
+fun commentsList(post: Post, showNComments: Int = 2) {
 
+    val firstComments = post.comments.subList(0, if (showNComments>post.comments.size) post.comments.size else showNComments)
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.Start,
+    ) {
+
+        if (firstComments.isNotEmpty()) {
+            firstComments.forEach { comment ->
+                Row() {
+                    Text(text = comment.author.name)
+                    Text(text = comment.message)
+                }
+            }
+        }
+        if (post.comments.size > 2) {
+            TextButton(onClick = {}) {
+                Text(text = "Show all ${post.comments.size} Comments")
+            }
+        }
+    }
 }
-
 
 //@Preview
 @Preview(uiMode = UI_MODE_NIGHT_YES)
