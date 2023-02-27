@@ -16,77 +16,48 @@ import fhs.mmt.nma.pixie.data.User
 import fhs.mmt.nma.pixie.samples.providers.UserSampleProvider
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 
-@Composable
-fun homeHeader(pageTitle: String = "Pixie") {
-    horizontalFragmentBase {
-        Box(
-            modifier = Modifier
-                .padding(start = 8.dp)) {
-            Text(text = pageTitle)
-        }
-    }
-}
 
 @Composable
-fun profileHeader(user: User, onArrowClickedFunction: () -> Unit) {
+fun header(pageTitle: String = "Pixie", onArrowClickedFunction: (() -> Unit)? = null) {
 
-    horizontalFragmentBase {
-        Row (
-            modifier = Modifier
-                .padding(start = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-                ) {
-            /*TODO
-            IconButton(onClick = { onArrowClickedFunction()},
-                modifier = Modifier
-                    .padding(0.dp),) {
-
-             */
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Go back")
-            //}
-            Text(text = user.name)
-        }
-        Box (
-            modifier = Modifier
-                .padding(end = 8.dp),) {
-            //TODO add IconButton here also
-            Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Settings")
-        }
+    if (onArrowClickedFunction == null) {
+        TopAppBar(
+            title = { Text(text = pageTitle) }
+            )
+    } else {
+        TopAppBar(
+            title = { Text(text = pageTitle) },
+            navigationIcon = {
+                IconButton(onClick = { onArrowClickedFunction() }) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Go back")
+                }
+            },
+            actions = {
+                IconButton(onClick = { /**/ }) {
+                    Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Settings")
+                }
+            }
+        )
     }
 }
-
-@Composable
-fun horizontalFragmentBase(composableContent: @Composable()() -> Unit) {
-    //Will apply SpaceBeetween to passed contents and the background - contents should be in Boxes defining Left-, central- and rightHeader
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colors.background),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        composableContent()
-    }
-}
-
-@Preview
-@Composable
-fun homeHeaderPreview() {
-    PixieTheme() {
-        Surface(color = MaterialTheme.colors.surface) {
-            homeHeader()
-        }
-    }
-}
-
 
 @Preview
 @Composable
 fun profileHeaderPreview(@PreviewParameter (UserSampleProvider::class) user: User) {
     PixieTheme() {
         Surface(color = MaterialTheme.colors.surface) {
-            profileHeader(user, {})
+            header(user.name, {})
+        }
+    }
+}
+
+
+@Preview
+@Composable
+fun homeHeaderPreview() {
+    PixieTheme() {
+        Surface(color = MaterialTheme.colors.surface) {
+            header()
         }
     }
 }

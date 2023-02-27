@@ -14,27 +14,34 @@ import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Comment
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.NoPhotography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import fhs.mmt.nma.pixie.data.Post
 import fhs.mmt.nma.pixie.data.User
 import fhs.mmt.nma.pixie.data.showCommentsNumber
 import fhs.mmt.nma.pixie.data.showLikesNumber
 import fhs.mmt.nma.pixie.samples.providers.PostSampleProvider
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
+import com.google.accompanist.pager.HorizontalPager
 
 @Composable
 fun PostCard(post: Post, onUserIconClick: (User) -> Unit = {}, onPostCardClick: (Post) -> Unit = {}) {
     //TODO Delete those default functions
     //TODO extract the same name but with fetching the data
     Column() {
-
         photographerHeader(onUserIconClick = onUserIconClick, post = post)
         photosDisplay(post = post)
         reactionsFooter(post = post)
@@ -63,14 +70,24 @@ fun photographerHeader(onUserIconClick: (User) -> Unit, post: Post) {
                     shape = CircleShape
                 )
         ) {
-            //TODO icon picture
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(post.author.picture)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.clip(CircleShape)
+            )
         }
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.Start
         ) {
-            Text(text = post.author.name)
-            post.author.location?.let { Text(text = it) }
+            Text(text = post.author.name,
+            style = MaterialTheme.typography.h2)
+            post.author.location?.let { Text(text = it,
+                style = MaterialTheme.typography.body2) }
         }
     }
 }
@@ -78,16 +95,14 @@ fun photographerHeader(onUserIconClick: (User) -> Unit, post: Post) {
 
 @Composable
 fun photosDisplay(post: Post) {
-    LazyRow(
-        modifier = Modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        items(post.photos) {
-
-        }
-    }
-
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(post.photos.first().url)
+            .crossfade(true)
+            .build(),
+        contentDescription = null,
+        modifier = Modifier.aspectRatio(4f/3f)
+    )
 }
 
 
@@ -115,22 +130,28 @@ fun reactionsNumbersRow(post: Post) {
             Icon(
                 imageVector = Icons.Outlined.Favorite,
                 contentDescription = "Like",
+                tint = MaterialTheme.colors.onSurface,
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .size(24.dp)
             )
-            Text(text = post.showLikesNumber())
+            Text(text = post.showLikesNumber(),
+                color = MaterialTheme.colors.onSurface)
         }
 
         TextButton(onClick = {}, contentPadding = PaddingValues(0.dp))
         {
-            Icon(Icons.Outlined.Comment, "Comment",
-            modifier = Modifier
-                .padding(end = 8.dp)
-                .size(24.dp)
+            Icon(
+                imageVector = Icons.Outlined.Comment,
+                contentDescription = "Comment",
+                tint = MaterialTheme.colors.onSurface,
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .size(24.dp)
             )
 
-            Text(text = post.showCommentsNumber())
+            Text(text = post.showCommentsNumber(),
+            color = MaterialTheme.colors.onSurface)
         }
     }
 }

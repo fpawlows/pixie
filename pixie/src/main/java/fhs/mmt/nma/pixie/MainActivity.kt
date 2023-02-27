@@ -11,7 +11,7 @@ import androidx.compose.material.ripple.rememberRipple
 import coil.compose.rememberImagePainter
 import fhs.mmt.nma.pixie.ui.home.HomeScreen
 import fhs.mmt.nma.pixie.ui.home.footer
-import fhs.mmt.nma.pixie.ui.home.homeHeader
+import fhs.mmt.nma.pixie.ui.home.header
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,10 +19,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PixieTheme {
-                Scaffold(topBar = { homeHeader() }, bottomBar = { footer() }) {
-                // A surface container using the 'background' color from the theme
-                //Surface(color = MaterialTheme.colors.background) {
-                    HomeScreen(paddingValues = it)
+                Surface(color = MaterialTheme.colors.surface) {
+                    Scaffold(topBar = { header() }, bottomBar = { footer() }) {
+                        // A surface container using the 'background' color from the theme
+                        //Surface(color = MaterialTheme.colors.background) {
+                        HomeScreen(paddingValues = it)
+                    }
                 }
             }
         }

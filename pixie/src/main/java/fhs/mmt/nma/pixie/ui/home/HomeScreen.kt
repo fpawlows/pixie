@@ -48,13 +48,13 @@ fun HomeScreen(posts: List<Post> = AllPosts, paddingValues : PaddingValues) {
 @Composable
 fun HomePreview() {
     PixieTheme {
-        Scaffold(backgroundColor = MaterialTheme.colors.surface,
-        bottomBar = { footer() },
-        topBar = { homeHeader()}) { paddingValues ->
-            HomeScreen(paddingValues = paddingValues)
+        Surface(color = MaterialTheme.colors.surface) {
+            Scaffold(
+                bottomBar = { footer() },
+                topBar = { header() }) { paddingValues ->
+                HomeScreen(paddingValues = paddingValues)
+            }
         }
+
     }
-
 }
-
-
