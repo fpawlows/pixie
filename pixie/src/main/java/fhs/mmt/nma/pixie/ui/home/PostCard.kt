@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.compose.AsyncImage
@@ -47,7 +48,7 @@ import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 
 @Composable
-fun PostCard(post: Post, onUserIconClick: (User) -> Unit = {}, onPostCardClick: (Post) -> Unit = {}) {
+fun PostCard(post: Post, onUserIconClick: (Int) -> Unit = {}, onPostCardClick: (Post) -> Unit = {}) {
     //TODO Delete those default functions
     //TODO extract the same name but with fetching the data
     Card(backgroundColor = MaterialTheme.colors.surface) {
@@ -61,7 +62,7 @@ fun PostCard(post: Post, onUserIconClick: (User) -> Unit = {}, onPostCardClick: 
 
 
 @Composable
-fun PhotographerHeader(onUserIconClick: (User) -> Unit, post: Post) {
+fun PhotographerHeader(onUserIconClick: (Int) -> Unit, post: Post) {
     Row(
         modifier = Modifier
             .padding(vertical = 8.dp)
@@ -69,28 +70,7 @@ fun PhotographerHeader(onUserIconClick: (User) -> Unit, post: Post) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        IconButton(
-            onClick = { onUserIconClick(post.author) },
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .size(48.dp)
-                .clip(CircleShape)
-                .border(
-                    width = 1.5.dp,
-                    color = MaterialTheme.colors.primary,
-                    shape = CircleShape
-                )
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(post.author.picture)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.clip(CircleShape)
-            )
-        }
+        RoundUserImage(user = post.author, onUserIconClick = onUserIconClick , size = 48.dp )
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.Start
@@ -103,6 +83,33 @@ fun PhotographerHeader(onUserIconClick: (User) -> Unit, post: Post) {
     }
 }
 
+
+@Composable
+fun RoundUserImage(user: User, onUserIconClick: (Int) -> Unit, size: Dp) {
+    IconButton(
+        onClick = { onUserIconClick(user.id) },
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .size(size)
+            .clip(CircleShape)
+            .border(
+                width = 1.5.dp,
+                color = MaterialTheme.colors.primary,
+                shape = CircleShape
+            )
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(user.picture)
+                .crossfade(true)
+                .build(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.clip(CircleShape)
+        )
+    }
+
+}
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -126,7 +133,7 @@ fun PhotosDisplay(post: Post) {
             contentScale = ContentScale.Crop,
             error = rememberVectorPainter(image = Icons.Filled.NoPhotography),
 
-            /*
+/*
             error = forwardingPainter(rememberVectorPainter(image = Icons.Filled.NoBackpack)) { info ->
                 inset(0.5f,0.5f) {
                     with (info.painter) {
@@ -134,7 +141,7 @@ fun PhotosDisplay(post: Post) {
                     }
                 }
             },
-             */
+*/
             modifier = Modifier
                 .aspectRatio(4f / 3f)
                 .placeholder(

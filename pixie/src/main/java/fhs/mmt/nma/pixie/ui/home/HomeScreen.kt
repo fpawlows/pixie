@@ -10,18 +10,29 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import fhs.mmt.nma.pixie.data.Post
 import fhs.mmt.nma.pixie.samples.AllPosts
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 
+/*
 @Composable
-fun HomeScreen(posts: List<Post> = AllPosts) {
+fun HomeScreen(goToProfile: (Int) -> Unit = {}) {
+    val viewModel: HomeViewModel = viewModel()
+    HomeScreen(goToProfile = goToProfile)
+}
+
+ */
+
+
+
+@Composable
+fun HomeScreen(posts: List<Post> = AllPosts, goToProfile: (Int) -> Unit = {}) {
 
     Scaffold(topBar = { header() }, bottomBar = { footer() }) { paddingValues ->
         Column(
@@ -35,7 +46,7 @@ fun HomeScreen(posts: List<Post> = AllPosts) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(posts) { post ->
-                    PostCard(post = post)
+                    PostCard(post = post, onUserIconClick = goToProfile)
                 }
             }
 
