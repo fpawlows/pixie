@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,49 +18,76 @@ import fhs.mmt.nma.pixie.data.Post
 import fhs.mmt.nma.pixie.samples.AllPosts
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 
-/*
+
 @Composable
 fun HomeScreen(goToProfile: (Int) -> Unit = {}) {
     val viewModel: HomeViewModel = viewModel()
-    HomeScreen(goToProfile = goToProfile)
+    val state = viewModel.uiState.value
+
+    HomeScreen(state = state, goToProfile = goToProfile)
 }
-
- */
-
 
 
 @Composable
-fun HomeScreen(posts: List<Post> = AllPosts, goToProfile: (Int) -> Unit = {}) {
+fun HomeScreen(state: HomeUiState, goToProfile: (Int) -> Unit = {}) {
+    when (state) {
+        is HomeUiState.Loading -> CircularProgressIndicator()
+        is HomeUiState.Error -> Text(text = "Error: ${state.message} ")
+        is HomeUiState.Content -> {
 
-    Scaffold(topBar = { header() }, bottomBar = { footer() }) { paddingValues ->
-        Column(
+            Scaffold(topBar = { header() }, bottomBar = { footer() }) { paddingValues ->
+                Column(
 //This columns is added to apply the PAddingValues because of using the Scaffolding
-            modifier = Modifier.padding(paddingValues)
-        ) {
+                    modifier = Modifier.padding(paddingValues)
+                ) {
 
-            LazyColumn(
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(posts) { post ->
-                    PostCard(post = post, onUserIconClick = goToProfile)
+                    LazyColumn(
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        items(state.posts) { post ->
+                            PostCard(post = post, onUserIconClick = goToProfile)
+                        }
+                    }
+
                 }
             }
-
         }
     }
 }
 
-//TODO should we use scaffold for top Bar and bottom nav bar?
-//what to do with those paddings with iconbutton and textbutton
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun HomePreview() {
     PixieTheme {
         Surface(color = MaterialTheme.colors.surface) {
-            HomeScreen()
+            HomeScreen(state = HomeUiState.Loading)
+        }
+    }
+
+}
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun HomePreview2() {
+    PixieTheme {
+        Surface(color = MaterialTheme.colors.surface) {
+            HomeScreen(state = HomeUiState.Error("Wrong data"))
+        }
+    }
+
+}
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun HomePreview3() {
+    PixieTheme {
+        Surface(color = MaterialTheme.colors.surface) {
+            HomeScreen(state = HomeUiState.Content(AllPosts))
         }
     }
 

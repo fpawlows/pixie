@@ -1,11 +1,11 @@
 package fhs.mmt.nma.pixie.ui.profile
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,12 +15,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import fhs.mmt.nma.pixie.data.Photographer
-import fhs.mmt.nma.pixie.data.Photography
-import fhs.mmt.nma.pixie.data.Post
 import fhs.mmt.nma.pixie.samples.AllPosts
-import fhs.mmt.nma.pixie.samples.FakePosts
 import fhs.mmt.nma.pixie.samples.providers.UserSampleProvider
-import fhs.mmt.nma.pixie.ui.home.HomeScreen
 import fhs.mmt.nma.pixie.ui.home.PhotoAsync
 import fhs.mmt.nma.pixie.ui.home.footer
 import fhs.mmt.nma.pixie.ui.home.header
@@ -28,31 +24,51 @@ import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 
 
 @Composable
-fun ProfileScreen(userPosts: List<Post> = AllPosts.filter { it.author.id == user.id },
-                  goToHomeScreen: ()->Unit = {}, user: Photographer) {
-    Scaffold(
-        topBar = { header(pageTitle = user.name, onArrowClickedFunction = goToHomeScreen) },
-        bottomBar = { footer() }
-    ) { paddingValues ->
-        Column(
+fun ProfileScreen(goToHomeScreen: ()->Unit = {}, user: Photographer) {
+    val viewModel: ProfileViewModel = viewModel()
+    viewModel.chooseUser(user)
+    val state = viewModel.uiState.value
+
+    ProfileScreen(profileUiState = state, goToHomeScreen = goToHomeScreen)
+}
+
+
+
+@Composable
+fun ProfileScreen(profileUiState: ProfileUiState ,goToHomeScreen: ()->Unit = {}) {
+
+    if (profileUiState.loading) {
+        CircularProgressIndicator()
+    } else if (profileUiState.error != null) {
+        Text(text = "Error: ${profileUiState.error}")
+    } else if (profileUiState.user!=null){
+
+
+        Scaffold(
+            topBar = { header(pageTitle = profileUiState.user.name, onArrowClickedFunction = goToHomeScreen) },
+            bottomBar = { footer() }
+        ) { paddingValues ->
+            Column(
 //This columns is added to apply the PAddingValues because of using the Scaffolding
-            modifier = Modifier.padding(paddingValues)
-        ) {
+                modifier = Modifier.padding(paddingValues)
+            ) {
 
-            LazyVerticalGrid(
-                verticalArrangement = Arrangement.spacedBy(1.dp),
-                horizontalArrangement = Arrangement.spacedBy(1.dp),
-                columns = GridCells.Fixed(3)) {
-                item(span = { GridItemSpan((maxLineSpan)) }) {
+                LazyVerticalGrid(
+                    verticalArrangement = Arrangement.spacedBy(1.dp),
+                    horizontalArrangement = Arrangement.spacedBy(1.dp),
+                    columns = GridCells.Fixed(3)
+                ) {
+                    item(span = { GridItemSpan((maxLineSpan)) }) {
 
-                    //var userPosts = FakePosts.filter { it.author == user }
-                    PhotographerHeader(user = user, userPosts = userPosts)
+                        //var userPosts = FakePosts.filter { it.author == user }
+                        PhotographerHeader(user = profileUiState.user, userPosts = profileUiState.content)
+                    }
+                    val userPhotos = profileUiState.content.map { post -> post.photos }.flatten()
+                    items(userPhotos) { photo ->
+                        PhotoAsync(photo = photo, aspectRatio = 1f / 1f)
+                    }
+
                 }
-                val userPhotos = userPosts.map { post -> post.photos }.flatten()
-                items(userPhotos) { photo ->
-                    PhotoAsync(photo = photo, aspectRatio = 1f/1f)
-                }
-
             }
         }
     }
@@ -67,3 +83,29 @@ fun ProfilePreview(@PreviewParameter(UserSampleProvider::class) user: Photograph
     }
 }
 
+
+@Preview
+@Composable
+fun ProfilePreview1(@PreviewParameter(UserSampleProvider::class) user: Photographer) {
+    PixieTheme {
+        ProfileScreen(profileUiState = ProfileUiState(loading = true, user =null, emptyList(), null))
+    }
+}
+
+
+@Preview
+@Composable
+fun ProfilePreview12(@PreviewParameter(UserSampleProvider::class) user: Photographer) {
+    PixieTheme {
+        ProfileScreen(profileUiState = ProfileUiState(loading = false, user =null, emptyList(), "Cannot load"))
+    }
+}
+
+
+@Preview
+@Composable
+fun ProfilePreview3(@PreviewParameter(UserSampleProvider::class) user: Photographer) {
+    PixieTheme {
+        ProfileScreen(profileUiState = ProfileUiState(loading = false, content = AllPosts.filter { it.author.id == user.id }, user = user, error=null))
+    }
+}

@@ -1,22 +1,23 @@
-/*
+
 package fhs.mmt.nma.pixie.ui.home
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import fhs.mmt.nma.pixie.data.Post
+import fhs.mmt.nma.pixie.samples.AllPosts
 import fhs.mmt.nma.pixie.samples.FakePosts
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 
 class HomeViewModel : ViewModel() {
-    val uiState: MutableStateFlow<HomeUiState> = MutableStateFlow(
+    val uiState: MutableState<HomeUiState> = mutableStateOf(
         HomeUiState.Loading
     )
 
     init {
-        uiState.update {
-            HomeUiState.Content(posts = FakePosts)
-        }
+        uiState.value = HomeUiState.Content(posts = AllPosts)
     }
 }
 
