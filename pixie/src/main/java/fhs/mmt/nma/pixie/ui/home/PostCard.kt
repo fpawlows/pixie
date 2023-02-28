@@ -108,11 +108,6 @@ fun PhotographerHeader(onUserIconClick: (User) -> Unit, post: Post) {
 @Composable
 fun PhotosDisplay(post: Post) {
 
-    val errorIcon = Icon(imageVector = Icons.Filled.NoPhotography, contentDescription = "No photography",
-    modifier = Modifier.size(24.dp))
-
-    var showShimmerPlaceholder by remember { mutableStateOf(true)}
-
     val pagerState = rememberPagerState()
     Column (
         horizontalAlignment = Alignment.CenterHorizontally
@@ -120,6 +115,7 @@ fun PhotosDisplay(post: Post) {
 
     HorizontalPager(count = post.photos.size, state = pagerState) { pageNr ->
         val photo = post.photos[pageNr]
+        var showShimmerPlaceholder by remember { mutableStateOf(true)}
 
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
