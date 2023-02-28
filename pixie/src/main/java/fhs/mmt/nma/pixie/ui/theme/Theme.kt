@@ -15,6 +15,6 @@ fun PixieTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable(
         else
             PixieLightColors,
         typography = PixieTypography,
-        //shapes = PixieShapes
+        shapes = PixieShapes,
     )
 }

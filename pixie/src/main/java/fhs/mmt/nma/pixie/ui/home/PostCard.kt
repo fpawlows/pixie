@@ -1,33 +1,28 @@
 package fhs.mmt.nma.pixie.ui.home
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.NoPhotography
 import androidx.compose.material.icons.outlined.Comment
 import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.NoPhotography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import fhs.mmt.nma.pixie.data.Post
 import fhs.mmt.nma.pixie.data.User
@@ -35,22 +30,24 @@ import fhs.mmt.nma.pixie.data.showCommentsNumber
 import fhs.mmt.nma.pixie.data.showLikesNumber
 import fhs.mmt.nma.pixie.samples.providers.PostSampleProvider
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
-import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.placeholder.material.shimmer
 
 @Composable
 fun PostCard(post: Post, onUserIconClick: (User) -> Unit = {}, onPostCardClick: (Post) -> Unit = {}) {
     //TODO Delete those default functions
     //TODO extract the same name but with fetching the data
     Column() {
-        photographerHeader(onUserIconClick = onUserIconClick, post = post)
-        photosDisplay(post = post)
-        reactionsFooter(post = post)
+        PhotographerHeader(onUserIconClick = onUserIconClick, post = post)
+        PhotosDisplay(post = post)
+        ReactionsFooter(post = post)
     }
 }
 
 
 @Composable
-fun photographerHeader(onUserIconClick: (User) -> Unit, post: Post) {
+fun PhotographerHeader(onUserIconClick: (User) -> Unit, post: Post) {
     Row(
         modifier = Modifier
             .padding(vertical = 8.dp)
@@ -94,28 +91,56 @@ fun photographerHeader(onUserIconClick: (User) -> Unit, post: Post) {
 
 
 @Composable
-fun photosDisplay(post: Post) {
+fun PhotosDisplay(post: Post) {
+/*
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(post.photos.first().url)
+            .crossfade(true)
+            .build(),
+        )
+*/
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(post.photos.first().url)
             .crossfade(true)
             .build(),
         contentDescription = null,
-        modifier = Modifier.aspectRatio(4f/3f)
+        modifier = Modifier
+            .aspectRatio(4f / 3f)
+            //.placeholder(visible = true, highlight = PlaceholderHighlight.shimmer())
+            //.clip(MaterialTheme.shapes.large)
+            //.clip(RoundedCornerShape(0.dp))
+
     )
 }
 
+/*
+@Composable
+fun PhotoError() {
+    Card(modifier = Modifier
+            .aspectRatio(4f / 3f)
+            .background(MaterialTheme.colors.surface)
+            .placeholder(visible = true, highlight = PlaceholderHighlight.shimmer())
+            //.clip(MaterialTheme.shapes.large) TODO not working
+        .clip(RoundedCornerShape(0.dp))
+
+    ) {
+        Icon(imageVector = Icons.Filled.NoPhotography, contentDescription = null, tint = MaterialTheme.colors.onSurface)
+    }
+}
+ */
 
 @Composable
-fun reactionsFooter(post: Post) {
-    reactionsNumbersRow(post = post)
-    commentsList(post = post)
+fun ReactionsFooter(post: Post) {
+    ReactionsNumbersRow(post = post)
+    CommentsList(post = post)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun reactionsNumbersRow(post: Post) {
+fun ReactionsNumbersRow(post: Post) {
     Row(
-        //TODO its not always directly next to the edge
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .padding(vertical = 24.dp, horizontal = 16.dp)
@@ -124,41 +149,50 @@ fun reactionsNumbersRow(post: Post) {
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        //TODO make it fully alligned to the edge
-        TextButton(onClick = {}, contentPadding = PaddingValues(0.dp))
-        {
-            Icon(
-                imageVector = Icons.Outlined.Favorite,
-                contentDescription = "Like",
-                tint = MaterialTheme.colors.onSurface,
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .size(24.dp)
-            )
-            Text(text = post.showLikesNumber(),
-                color = MaterialTheme.colors.onSurface)
+        Surface(onClick = {}, color = MaterialTheme.colors.background.copy(alpha = 1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically)
+            {
+                Icon(
+                    //painter = painterResource(id = R.drawable.ic_outline_favorite_border), TODO favorite is not outlined
+                    imageVector = Icons.Outlined.Favorite,
+                    contentDescription = "Like",
+                    tint = MaterialTheme.colors.onSurface,
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .size(24.dp)
+                )
+                Text(
+                    text = post.showLikesNumber(),
+                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.caption
+                )
+            }
         }
+        Surface(onClick = {}, color = MaterialTheme.colors.background.copy(alpha = 1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically)
+            {
+                Icon(
+                    imageVector = Icons.Filled.Comment,
+                    contentDescription = "Comment",
+                    tint = MaterialTheme.colors.onSurface,
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .size(24.dp)
+                )
 
-        TextButton(onClick = {}, contentPadding = PaddingValues(0.dp))
-        {
-            Icon(
-                imageVector = Icons.Outlined.Comment,
-                contentDescription = "Comment",
-                tint = MaterialTheme.colors.onSurface,
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .size(24.dp)
-            )
-
-            Text(text = post.showCommentsNumber(),
-            color = MaterialTheme.colors.onSurface)
+                Text(
+                    text = post.showCommentsNumber(),
+                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.caption
+                )
+            }
         }
     }
 }
 
 
 @Composable
-fun commentsList(post: Post, showNComments: Int = 2) {
+fun CommentsList(post: Post, showNComments: Int = 2) {
 
     val firstComments = post.comments.subList(0, if (showNComments>post.comments.size) post.comments.size else showNComments)
 
@@ -188,7 +222,7 @@ fun commentsList(post: Post, showNComments: Int = 2) {
     }
 }
 
-//@Preview
+@Preview
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun PostPreview(@PreviewParameter(PostSampleProvider::class) post: Post) {
@@ -199,5 +233,17 @@ fun PostPreview(@PreviewParameter(PostSampleProvider::class) post: Post) {
     }
 }
 
+/*
+@Preview
+@Composable
+fun ImageError() {
+    PixieTheme {
+        Surface(color = MaterialTheme.colors.background) {
 
+            PhotoError()
 
+        }
+    }
+}
+
+ */

@@ -64,6 +64,8 @@ dependencies {
 
     implementation(libs.accompanist.pager.pager)
     implementation(libs.accompanist.pager.indicators)
+    implementation(libs.accompanist.placeholder)
+
 
     implementation(libs.coil.compose)
 }
