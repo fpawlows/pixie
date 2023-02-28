@@ -37,15 +37,12 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
-import fhs.mmt.nma.pixie.data.Post
-import fhs.mmt.nma.pixie.data.User
-import fhs.mmt.nma.pixie.data.showCommentsNumber
-import fhs.mmt.nma.pixie.data.showLikesNumber
 import fhs.mmt.nma.pixie.samples.providers.PostSampleProvider
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
+import fhs.mmt.nma.pixie.data.*
 
 @Composable
 fun PostCard(post: Post, onUserIconClick: (Int) -> Unit = {}, onPostCardClick: (Post) -> Unit = {}) {
@@ -122,8 +119,22 @@ fun PhotosDisplay(post: Post) {
 
     HorizontalPager(count = post.photos.size, state = pagerState) { pageNr ->
         val photo = post.photos[pageNr]
-        var showShimmerPlaceholder by remember { mutableStateOf(true)}
 
+        PhotoAsync(photo = photo)
+    }
+    if(pagerState.pageCount > 1) {
+        HorizontalPagerIndicator(pagerState = pagerState, modifier = Modifier
+            .padding(top = 8.dp)
+        )
+    }
+    }
+    }
+
+
+
+    @Composable
+    fun PhotoAsync(photo: Photography, aspectRatio: Float = 4f/3f) {
+        var showShimmerPlaceholder by remember { mutableStateOf(true)}
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(photo.url)
@@ -143,7 +154,7 @@ fun PhotosDisplay(post: Post) {
             },
 */
             modifier = Modifier
-                .aspectRatio(4f / 3f)
+                .aspectRatio(aspectRatio)
                 .placeholder(
                     visible = showShimmerPlaceholder,
                     highlight = PlaceholderHighlight.shimmer()
@@ -154,14 +165,6 @@ fun PhotosDisplay(post: Post) {
             onError = {showShimmerPlaceholder = false},
         )
     }
-
-    if(pagerState.pageCount > 1) {
-        HorizontalPagerIndicator(pagerState = pagerState, modifier = Modifier
-            .padding(top = 8.dp)
-        )
-    }
-    }
-}
 
 
 @Composable

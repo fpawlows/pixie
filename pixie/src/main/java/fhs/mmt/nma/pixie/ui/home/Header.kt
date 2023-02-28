@@ -22,11 +22,11 @@ fun header(pageTitle: String = "Pixie", onArrowClickedFunction: (() -> Unit)? = 
 
     if (onArrowClickedFunction == null) {
         TopAppBar(
-            title = { Text(text = pageTitle) }
+            title = { Text(text = pageTitle, style = MaterialTheme.typography.h1) }
             )
     } else {
         TopAppBar(
-            title = { Text(text = pageTitle) },
+            title = { Text(text = pageTitle, style = MaterialTheme.typography.h1) },
             navigationIcon = {
                 IconButton(onClick = { onArrowClickedFunction() }) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Go back")
