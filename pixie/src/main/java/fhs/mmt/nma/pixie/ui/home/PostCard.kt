@@ -19,6 +19,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -29,8 +31,10 @@ import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import fhs.mmt.nma.pixie.data.Post
 import fhs.mmt.nma.pixie.data.User
@@ -103,19 +107,17 @@ fun PhotographerHeader(onUserIconClick: (User) -> Unit, post: Post) {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun PhotosDisplay(post: Post) {
-/*
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(post.photos.first().url)
-            .crossfade(true)
-            .build(),
-        )
-*/
+
+    val errorIcon = Icon(imageVector = Icons.Filled.NoPhotography, contentDescription = "No photography",
+    modifier = Modifier.size(24.dp))
 
     var showShimmerPlaceholder by remember { mutableStateOf(true)}
 
     val pagerState = rememberPagerState()
-    
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
     HorizontalPager(count = post.photos.size, state = pagerState) { pageNr ->
         val photo = post.photos[pageNr]
 
@@ -127,14 +129,34 @@ fun PhotosDisplay(post: Post) {
             contentDescription = null,
             contentScale = ContentScale.Crop,
             error = rememberVectorPainter(image = Icons.Filled.NoPhotography),
-            //placeholder = rememberVectorPainter(image = Icons.Filled.NoBackpack),
+
+            /*
+            error = forwardingPainter(rememberVectorPainter(image = Icons.Filled.NoBackpack)) { info ->
+                inset(0.5f,0.5f) {
+                    with (info.painter) {
+                        draw(Size(1f, 1f), info.alpha, info.colorFilter)
+                    }
+                }
+            },
+             */
             modifier = Modifier
                 .aspectRatio(4f / 3f)
-                .placeholder(visible = showShimmerPlaceholder, highlight = PlaceholderHighlight.shimmer())
+                .placeholder(
+                    visible = showShimmerPlaceholder,
+                    highlight = PlaceholderHighlight.shimmer()
+                )
                 .clip(MaterialTheme.shapes.large),
             onLoading = { showShimmerPlaceholder = true},
-            onSuccess = {showShimmerPlaceholder = false}
+            onSuccess = {showShimmerPlaceholder = false},
+            onError = {showShimmerPlaceholder = false},
         )
+    }
+
+    if(pagerState.pageCount > 1) {
+        HorizontalPagerIndicator(pagerState = pagerState, modifier = Modifier
+            .padding(top = 8.dp)
+        )
+    }
     }
 }
 
