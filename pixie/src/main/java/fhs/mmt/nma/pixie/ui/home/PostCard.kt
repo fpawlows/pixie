@@ -1,6 +1,7 @@
 package fhs.mmt.nma.pixie.ui.home
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -84,7 +85,8 @@ fun PhotographerHeader(onUserIconClick: (Int) -> Unit, post: Post) {
 @Composable
 fun RoundUserImage(user: User, onUserIconClick: (Int) -> Unit, size: Dp) {
     IconButton(
-        onClick = { onUserIconClick(user.id) },
+        onClick = {
+            onUserIconClick(user.id) },
         modifier = Modifier
             .padding(horizontal = 8.dp)
             .size(size)

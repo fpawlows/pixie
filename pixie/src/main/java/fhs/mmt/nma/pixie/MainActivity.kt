@@ -1,6 +1,7 @@
 package fhs.mmt.nma.pixie
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -15,7 +16,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.compose.rememberImagePainter
+import fhs.mmt.nma.pixie.samples.AllUsers
 import fhs.mmt.nma.pixie.samples.FakeUsers
+import fhs.mmt.nma.pixie.samples.IvanCujic
 import fhs.mmt.nma.pixie.ui.home.HomeScreen
 import fhs.mmt.nma.pixie.ui.home.footer
 import fhs.mmt.nma.pixie.ui.home.header
@@ -60,7 +63,7 @@ fun PixieNavigation() {
         )
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getInt("id");
-            val user = FakeUsers.find { it.id == id }
+            val user = AllUsers.find{ it.id == id }
             if (user != null) {
                 ProfileScreen(
                     goToHomeScreen = {

@@ -28,7 +28,7 @@ import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 
 
 @Composable
-fun ProfileScreen(userPosts: List<Post> = FakePosts.filter { it.author.id == user.id },
+fun ProfileScreen(userPosts: List<Post> = AllPosts.filter { it.author.id == user.id },
                   goToHomeScreen: ()->Unit = {}, user: Photographer) {
     Scaffold(
         topBar = { header(pageTitle = user.name, onArrowClickedFunction = goToHomeScreen) },

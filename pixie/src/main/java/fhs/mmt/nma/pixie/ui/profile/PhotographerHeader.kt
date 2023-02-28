@@ -1,5 +1,7 @@
 package fhs.mmt.nma.pixie.ui.profile
 
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.*
@@ -13,8 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fhs.mmt.nma.pixie.data.*
+import fhs.mmt.nma.pixie.samples.AllPosts
+import fhs.mmt.nma.pixie.samples.IvanCujic
 import fhs.mmt.nma.pixie.ui.home.RoundUserImage
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -34,7 +39,10 @@ fun PhotographerHeader(user: Photographer, userPosts: List<Post>) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(vertical = 24.dp)
+            modifier = Modifier
+                .padding(vertical = 24.dp)
+                .fillMaxWidth()
+
         ) {
             RoundUserImage(user = user, onUserIconClick = {}, size = 80.dp)
             Column(
@@ -67,6 +75,8 @@ fun PhotographerHeader(user: Photographer, userPosts: List<Post>) {
         }
 
         Row(
+            modifier = Modifier
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
@@ -74,12 +84,14 @@ fun PhotographerHeader(user: Photographer, userPosts: List<Post>) {
         }
 
         Row(
+            modifier = Modifier
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             if (user.location!=null) {
-                Surface(onClick = {}) {
+                Surface(onClick = {}, color = MaterialTheme.colors.background.copy(alpha = 1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically)
                     {
                         Icon(
@@ -100,8 +112,16 @@ fun PhotographerHeader(user: Photographer, userPosts: List<Post>) {
             }
 
             if (user.instagram!=null) {
+                val context = LocalContext.current
                 Surface(onClick = {
-                   }) {
+
+                    val instagramIntent = Intent()
+                    instagramIntent.action = Intent.ACTION_VIEW
+                    instagramIntent.data = Uri.parse("http://instagram.com/" + user.instagram);
+                    instagramIntent.setPackage("com.instagram.android");
+
+                    context.startActivity(instagramIntent)
+                }, color = MaterialTheme.colors.background.copy(alpha = 1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically)
                     {
                         Icon(
@@ -124,14 +144,3 @@ fun PhotographerHeader(user: Photographer, userPosts: List<Post>) {
         }
     }
 }
-
-@Composable
-fun OpenInstagram(instagram: String) {
-    val instagramIntent = Intent()
-    instagramIntent.action = Intent.ACTION_VIEW
-    instagramIntent.setData(Uri.parse(instagram))
-    LocalContext.current.startActivity(instagramIntent)
-
-}
-
-
