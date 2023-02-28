@@ -21,23 +21,25 @@ import fhs.mmt.nma.pixie.samples.AllPosts
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 
 @Composable
-fun HomeScreen(posts: List<Post> = AllPosts, paddingValues : PaddingValues) {
+fun HomeScreen(posts: List<Post> = AllPosts) {
 
-    Column (
+    Scaffold(topBar = { header() }, bottomBar = { footer() }) { paddingValues ->
+        Column(
 //This columns is added to apply the PAddingValues because of using the Scaffolding
-        modifier = Modifier.padding(paddingValues)
-            ) {
-
-        LazyColumn(
-            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.padding(paddingValues)
         ) {
-            items(posts) { post ->
-                PostCard(post = post)
-            }
-        }
 
+            LazyColumn(
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                items(posts) { post ->
+                    PostCard(post = post)
+                }
+            }
+
+        }
     }
 }
 
@@ -49,12 +51,8 @@ fun HomeScreen(posts: List<Post> = AllPosts, paddingValues : PaddingValues) {
 fun HomePreview() {
     PixieTheme {
         Surface(color = MaterialTheme.colors.surface) {
-            Scaffold(
-                bottomBar = { footer() },
-                topBar = { header() }) { paddingValues ->
-                HomeScreen(paddingValues = paddingValues)
-            }
+            HomeScreen()
         }
-
     }
+
 }

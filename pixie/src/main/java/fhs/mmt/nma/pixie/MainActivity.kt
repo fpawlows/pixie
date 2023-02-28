@@ -20,11 +20,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             PixieTheme {
                 Surface(color = MaterialTheme.colors.surface) {
-                    Scaffold(topBar = { header() }, bottomBar = { footer() }) {
-                        // A surface container using the 'background' color from the theme
-                        //Surface(color = MaterialTheme.colors.background) {
-                        HomeScreen(paddingValues = it)
-                    }
+                    // A surface container using the 'background' color from the theme
+                    //Surface(color = MaterialTheme.colors.background) {
+                    HomeScreen()
                 }
             }
         }
