@@ -10,6 +10,6 @@ import androidx.compose.ui.unit.dp
 
 val PixieShapes = Shapes(
     small = RoundedCornerShape(0.dp),
-    medium = RoundedCornerShape(0),
-    large = RoundedCornerShape(0),
+    medium = RoundedCornerShape(0.dp),
+    large = RoundedCornerShape(0.dp),
 )

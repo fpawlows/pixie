@@ -15,7 +15,7 @@ import androidx.compose.material.icons.filled.NoPhotography
 import androidx.compose.material.icons.outlined.Comment
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -110,10 +111,13 @@ fun PhotosDisplay(post: Post) {
             .build(),
         )
 */
+
+    var showShimmerPlaceholder by remember { mutableStateOf(true)}
+
     val pagerState = rememberPagerState()
     
     HorizontalPager(count = post.photos.size, state = pagerState) { pageNr ->
-        val photo = post.photos.get(pageNr)
+        val photo = post.photos[pageNr]
 
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -123,13 +127,13 @@ fun PhotosDisplay(post: Post) {
             contentDescription = null,
             contentScale = ContentScale.Crop,
             error = rememberVectorPainter(image = Icons.Filled.NoPhotography),
-            placeholder = rememberVectorPainter(image = Icons.Filled.NoBackpack),
+            //placeholder = rememberVectorPainter(image = Icons.Filled.NoBackpack),
             modifier = Modifier
                 .aspectRatio(4f / 3f)
-                //.placeholder(visible = true, highlight = PlaceholderHighlight.shimmer())
-                //.clip(MaterialTheme.shapes.large)
-                .clip(RoundedCornerShape(0.dp))
-
+                .placeholder(visible = showShimmerPlaceholder, highlight = PlaceholderHighlight.shimmer())
+                .clip(MaterialTheme.shapes.large),
+            onLoading = { showShimmerPlaceholder = true},
+            onSuccess = {showShimmerPlaceholder = false}
         )
     }
 }
