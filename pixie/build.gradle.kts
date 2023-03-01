@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.coil.compose)
 
     implementation(libs.dagger.hilt.dep)
-    implementation(libs.dagger.hilt.kapt)
-
+    kapt(libs.dagger.hilt.kapt)
+    implementation(libs.dagger.hilt.andr)
+    implementation(libs.androidx.fragmnt.ktx)
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.*
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -23,11 +24,11 @@ import fhs.mmt.nma.pixie.ui.home.PhotoAsync
 import fhs.mmt.nma.pixie.ui.home.footer
 import fhs.mmt.nma.pixie.ui.home.header
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
-
+import androidx.activity.viewModels
 
 @Composable
 fun ProfileScreen(goToHomeScreen: ()->Unit = {}, userId: Int) {
-    val viewModel: ProfileViewModel = viewModel()
+    val viewModel : ProfileViewModel_ by viewModels()
 
     val state = viewModel.uiState.collectAsState().value
 

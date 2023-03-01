@@ -52,9 +52,11 @@ androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-
 
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 
+dagger-hilt-andr = "androidx.hilt:hilt-navigation-compose:1.0.0-alpha03"
+
 android-tools-build-gradle = { module = "com.android.tools.build:gradle", version.ref = "build-gradle" }
 
 dagger-hilt-plug = {module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "dagger"}
 dagger-hilt-dep = {module = "com.google.dagger:hilt-android", version.ref = "dagger"}
 dagger-hilt-kapt = {module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger"}
-
+androidx-fragmnt-ktx = "androidx.fragment:fragment-ktx:1.4.1"
