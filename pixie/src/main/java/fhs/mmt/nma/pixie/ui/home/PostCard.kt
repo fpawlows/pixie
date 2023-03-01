@@ -124,19 +124,19 @@ fun PhotosDisplay(post: Post) {
     Column (
         horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-    HorizontalPager(count = post.photos.size, state = pagerState) { pageNr ->
-        val photo = post.photos[pageNr]
-
         Card {
-            PhotoAsync(photo = photo)
-            Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End) {
+            HorizontalPager(count = post.photos.size, state = pagerState) { pageNr ->
+                val photo = post.photos[pageNr]
+                PhotoAsync(photo = photo)
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
 
 
                 NumeralPageIndicator(pagerState = pagerState)
             }
-        }
         }
     if(pagerState.pageCount > 1) {
         HorizontalPagerIndicator(pagerState = pagerState, activeColor = MaterialTheme.colors.secondary, modifier = Modifier
