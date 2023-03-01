@@ -21,7 +21,7 @@ import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 
 
 @Composable
-fun HomeScreen(goToProfile: (Int) -> Unit = {}) {
+fun HomeScreen(posts: List<Post> = AllPosts, goToProfile: (Int) -> Unit = {}) {
     val viewModel: HomeViewModel = viewModel()
     val state = viewModel.uiState.collectAsState().value
 
