@@ -9,6 +9,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -27,7 +28,7 @@ import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 fun ProfileScreen(goToHomeScreen: ()->Unit = {}, user: Photographer) {
     val viewModel: ProfileViewModel = viewModel()
     viewModel.chooseUser(user)
-    val state = viewModel.uiState.value
+    val state = viewModel.uiState.collectAsState().value
 
     ProfileScreen(profileUiState = state, goToHomeScreen = goToHomeScreen)
 }

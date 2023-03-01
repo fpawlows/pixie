@@ -12,12 +12,14 @@ import kotlinx.coroutines.flow.update
 
 
 class HomeViewModel : ViewModel() {
-    val uiState: MutableState<HomeUiState> = mutableStateOf(
+    val uiState: MutableStateFlow<HomeUiState> = MutableStateFlow(
         HomeUiState.Loading
     )
 
     init {
-        uiState.value = HomeUiState.Content(posts = AllPosts)
+        uiState.update {
+            HomeUiState.Content(posts = AllPosts)
+        }
     }
 }
 
@@ -26,23 +28,3 @@ sealed class HomeUiState {
     data class Content (val posts: List<Post>) : HomeUiState()
     data class Error (val message: String) : HomeUiState()
 }
-
-/*
-class HomeViewModel : ViewModel() {
-    val uiState: MutableState<HomeUiState> = mutableStateOf(
-        HomeUiState(
-            loading = true,
-            posts = emptyList(),
-            error = null
-        )
-    )
-}
-
-data class HomeUiState (
-    val loading: Boolean,
-    val posts: List<Post>,
-    val error: String?
-)
-
-
- */

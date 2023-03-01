@@ -18,10 +18,11 @@ import kotlinx.coroutines.flow.update
 
 
 class ProfileViewModel(userId: Int) : ViewModel() {
-    val uiState: MutableState<ProfileUiState> = mutableStateOf(
+    val uiState: MutableStateFlow<ProfileUiState> = MutableStateFlow(
         ProfileUiState(loading = true, user =null, content = emptyList(), error = null)
     )
 
+//TODO change to init
     fun chooseUser(user: Photographer) {
         uiState.value = ProfileUiState(
             loading = false,
