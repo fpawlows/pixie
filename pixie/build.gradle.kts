@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -66,6 +68,9 @@ dependencies {
     implementation(libs.accompanist.pager.indicators)
     implementation(libs.accompanist.placeholder)
 
-
     implementation(libs.coil.compose)
+
+    implementation(libs.dagger.hilt.dep)
+    implementation(libs.dagger.hilt.kapt)
+
 }

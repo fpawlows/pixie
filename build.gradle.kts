@@ -8,5 +8,6 @@ buildscript {
     dependencies {
         classpath(libs.android.tools.build.gradle)
         classpath(libs.kotlin.gradle)
+        classpath(libs.dagger.hilt.plug)
     }
 }

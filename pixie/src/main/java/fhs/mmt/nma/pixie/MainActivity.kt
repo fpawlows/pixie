@@ -43,6 +43,7 @@ fun PixieNavigation() {
     ) {
 
         composable(route = "home") {
+            val viewModel: HomeViewModel = viewModel()
             HomeScreen(
                 goToProfile = {
                     navController.navigate(route = "profile/$it")
