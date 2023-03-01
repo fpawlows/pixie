@@ -25,6 +25,7 @@ import fhs.mmt.nma.pixie.ui.home.footer
 import fhs.mmt.nma.pixie.ui.home.header
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 import androidx.activity.viewModels
+import kotlin.random.Random
 
 @Composable
 fun ProfileScreen(goToHomeScreen: ()->Unit = {}) {
@@ -32,21 +33,11 @@ fun ProfileScreen(goToHomeScreen: ()->Unit = {}) {
 
     val state = viewModel.uiState.collectAsState().value
 
-//TODO idk why it needs initialization and how to do it better
-    val photographerDTOInitial: PhotographerDTO =
-        PhotographerDTO(0, "", "", "", "", "", "", emptyList(), 0, 0,)
-    val photographerDTOState =
-        viewModel.photographerDTO.collectAsState(photographerDTOInitial).value
-    /*
-    if (!state.loading && state.error != null) {
-        val user = state.users.find { it.id == state.userId }
-        if (user != null) {
-            viewModel.chooseUser(user)
-        }
-*/
+    checkNotNull(state.user)
+    //TODO here is the error
+
     ProfileScreen(
         profileUiState = state,
-        photographerDTO = photographerDTOState,
         goToHomeScreen = goToHomeScreen
     )
 }
@@ -54,17 +45,17 @@ fun ProfileScreen(goToHomeScreen: ()->Unit = {}) {
 
 
 @Composable
-fun ProfileScreen(profileUiState: ProfileUiState, photographerDTO: PhotographerDTO , goToHomeScreen: ()->Unit = {}) {
+fun ProfileScreen(profileUiState: ProfileUiState , goToHomeScreen: ()->Unit = {}) {
 
     if (profileUiState.loading) {
         CircularProgressIndicator()
     } else if (profileUiState.error != null) {
         Text(text = "Error: ${profileUiState.error}")
-    } else if (photographerDTO!=null){
+    } else if (profileUiState.user!=null){
 
 
         Scaffold(
-            topBar = { header(pageTitle = photographerDTO.name, onArrowClickedFunction = goToHomeScreen) },
+            topBar = { header(pageTitle = profileUiState.user.name, onArrowClickedFunction = goToHomeScreen) },
             bottomBar = { footer() }
         ) { paddingValues ->
             Column(
@@ -80,10 +71,9 @@ fun ProfileScreen(profileUiState: ProfileUiState, photographerDTO: PhotographerD
                     item(span = { GridItemSpan((maxLineSpan)) }) {
 
                         //var userPosts = FakePosts.filter { it.author == user }
-                        PhotographerHeader(user = photographerDTO, userPosts = profileUiState.content)
+                        PhotographerHeader(user = profileUiState.user)
                     }
-                    val userPhotos = profileUiState.content.map { post -> post.photos }.flatten()
-                    items(userPhotos) { photo ->
+                    items(profileUiState.user.photos) { photo ->
                         PhotoAsync(photo = photo, aspectRatio = 1f / 1f)
                     }
 
@@ -109,10 +99,9 @@ fun ProfilePreview1(@PreviewParameter(UserSampleProvider::class) user: Photograp
     PixieTheme {
         ProfileScreen(profileUiState = ProfileUiState(
             loading = true,
-            content = emptyList(),
-            users = emptyList(),
+            user = PhotographerDTOFromUser(user),
             error = null
-        ), PhotographerDTOFromUser(user))
+        ))
     }
 }
 
@@ -123,10 +112,9 @@ fun ProfilePreview12(@PreviewParameter(UserSampleProvider::class) user: Photogra
     PixieTheme {
         ProfileScreen(profileUiState = ProfileUiState(
             loading = false,
-            content = emptyList(),
-            users = emptyList(),
-            error =  "Cannot load"
-        ), PhotographerDTOFromUser(user))
+            error =  "Cannot load",
+            user = PhotographerDTOFromUser(user)
+        ))
     }
 }
 
@@ -137,9 +125,8 @@ fun ProfilePreview3(@PreviewParameter(UserSampleProvider::class) user: Photograp
     PixieTheme {
         ProfileScreen(profileUiState = ProfileUiState(
             loading = false,
-            content = AllPosts.filter { it.author.id == user.id },
-            users= AllUsers,
+            user = PhotographerDTOFromUser(user),
             error=null
-        ), PhotographerDTOFromUser(user))
+        ))
     }
 }

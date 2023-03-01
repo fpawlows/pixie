@@ -3,6 +3,8 @@ package fhs.mmt.nma.pixie.ui.profile
 
 import android.os.Bundle
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,32 +28,29 @@ class ProfileViewModel(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val uiState: MutableStateFlow<ProfileUiState> = MutableStateFlow(
-        ProfileUiState(loading = true, content = emptyList(), users = emptyList(), error = null)
+        ProfileUiState(loading = true, error = null, user = null)
     )
 
-    val photographerDTO: Flow<PhotographerDTO> = savedStateHandle
-        .getStateFlow<String?>("userId", null)
-        .map {
-            val userId = it?.toIntOrNull()
-                ?: throw IllegalArgumentException("You have to provide userId as parameter of type Int when navigating to details")
-            uiState.update { it.copy(userId=userId) }
+    val userId: MutableLiveData<Int?> = savedStateHandle.getLiveData<Int?>("userId");
+    val userId_s: MutableLiveData<String?> = savedStateHandle.getLiveData<String?>("userId");
 
-            val user: Photographer = checkNotNull(uiState.value.users?.find { it.id == userId })
-            // call dependencies as needed
-            PhotographerDTOFromUser(user)
-    }
     init {
         uiState.update {
             ProfileUiState(
                 loading = false,
-                content =  AllPosts.filter { post -> post.author.id == uiState.value.userId},
                 error = null,
-                users = AllUsers,
+                user = AllUsers.find { it.id == userId.value }
+                    ?.let { it1 -> PhotographerDTOFromUser(it1).copy(
+                        photos= AllPosts.map { post -> post.photos }.flatten(),
+                        totalLikes = AllPosts.filter { post -> post.author.id == userId.value}.sumOf { post -> post.likes },
+                        totalComments = AllPosts.filter { post -> post.author.id == userId.value}.sumOf { post -> post.comments.size } )
+                    }
             )
         }
     }
 }
-public fun PhotographerDTOFromUser(user: Photographer): PhotographerDTO {
+
+fun PhotographerDTOFromUser(user: Photographer): PhotographerDTO {
     return PhotographerDTO(
         id = user.id,
         name = user.name,
@@ -60,18 +59,16 @@ public fun PhotographerDTOFromUser(user: Photographer): PhotographerDTO {
         profile = user.profile,
         location = user.location,
         instagram = user.instagram,
-        //TODO 3 below
         photos = emptyList(),
         totalComments = 0,
-        totalLikes = 0)
+        totalLikes = 0
+    )
 }
 
 data class ProfileUiState(
     val loading: Boolean,
-    val content: List<Post>,
-    val users: List<Photographer>,
     val error: String?,
-    val userId: Int?=null
+    val user: PhotographerDTO?
 )
 
 
@@ -83,7 +80,7 @@ data class PhotographerDTO(
     val profile: String? = null,
     val location: String? = null,
     val instagram: String? = null,
-    val photos: List<Photography>,
+    val photos: List<Photography> = emptyList(),
     val totalLikes: Int,
     val totalComments: Int,
 )

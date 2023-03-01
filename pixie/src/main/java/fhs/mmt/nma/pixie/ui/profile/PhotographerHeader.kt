@@ -24,10 +24,7 @@ import fhs.mmt.nma.pixie.ui.home.RoundUserImage
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PhotographerHeader(user: PhotographerDTO, userPosts: List<Post>) {
-    val likesNumber: Int = userPosts.sumOf { post -> post.likes }
-    val commentsNumber: Int = userPosts.sumOf { post -> post.comments.size }
-    val photosNumber: Int = userPosts.sumOf { post -> post.photos.size }
+fun PhotographerHeader(user: PhotographerDTO) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -49,7 +46,7 @@ fun PhotographerHeader(user: PhotographerDTO, userPosts: List<Post>) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = displayNumberShortcut(likesNumber), style = MaterialTheme.typography.h2)
+                Text(text = displayNumberShortcut(user.totalLikes), style = MaterialTheme.typography.h2)
                 Text(text = "Likes", style = MaterialTheme.typography.caption)
             }
             Column(
@@ -57,7 +54,7 @@ fun PhotographerHeader(user: PhotographerDTO, userPosts: List<Post>) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = displayNumberShortcut(photosNumber),
+                    text = displayNumberShortcut(user.photos.size),
                     style = MaterialTheme.typography.h2
                 )
                 Text(text = "Photos", style = MaterialTheme.typography.caption)
@@ -67,7 +64,7 @@ fun PhotographerHeader(user: PhotographerDTO, userPosts: List<Post>) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = displayNumberShortcut(commentsNumber),
+                    text = displayNumberShortcut(user.totalComments),
                     style = MaterialTheme.typography.h2
                 )
                 Text(text = "Comments", style = MaterialTheme.typography.caption)
