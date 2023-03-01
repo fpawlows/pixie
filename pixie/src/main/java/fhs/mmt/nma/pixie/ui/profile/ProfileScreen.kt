@@ -27,35 +27,44 @@ import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 import androidx.activity.viewModels
 
 @Composable
-fun ProfileScreen(goToHomeScreen: ()->Unit = {}, userId: Int) {
-    val viewModel : ProfileViewModel_ by viewModels()
+fun ProfileScreen(goToHomeScreen: ()->Unit = {}) {
+    val viewModel: ProfileViewModel = viewModel()
 
     val state = viewModel.uiState.collectAsState().value
 
+//TODO idk why it needs initialization and how to do it better
+    val photographerDTOInitial: PhotographerDTO =
+        PhotographerDTO(0, "", "", "", "", "", "", emptyList(), 0, 0,)
+    val photographerDTOState =
+        viewModel.photographerDTO.collectAsState(photographerDTOInitial).value
+    /*
     if (!state.loading && state.error != null) {
-        val user = state.users.find { it.id == userId }
+        val user = state.users.find { it.id == state.userId }
         if (user != null) {
             viewModel.chooseUser(user)
         }
-
-        ProfileScreen(profileUiState = state, goToHomeScreen = goToHomeScreen)
-    }
+*/
+    ProfileScreen(
+        profileUiState = state,
+        photographerDTO = photographerDTOState,
+        goToHomeScreen = goToHomeScreen
+    )
 }
 
 
 
 @Composable
-fun ProfileScreen(profileUiState: ProfileUiState ,goToHomeScreen: ()->Unit = {}) {
+fun ProfileScreen(profileUiState: ProfileUiState, photographerDTO: PhotographerDTO , goToHomeScreen: ()->Unit = {}) {
 
     if (profileUiState.loading) {
         CircularProgressIndicator()
     } else if (profileUiState.error != null) {
         Text(text = "Error: ${profileUiState.error}")
-    } else if (profileUiState.user!=null){
+    } else if (photographerDTO!=null){
 
 
         Scaffold(
-            topBar = { header(pageTitle = profileUiState.user.name, onArrowClickedFunction = goToHomeScreen) },
+            topBar = { header(pageTitle = photographerDTO.name, onArrowClickedFunction = goToHomeScreen) },
             bottomBar = { footer() }
         ) { paddingValues ->
             Column(
@@ -71,7 +80,7 @@ fun ProfileScreen(profileUiState: ProfileUiState ,goToHomeScreen: ()->Unit = {})
                     item(span = { GridItemSpan((maxLineSpan)) }) {
 
                         //var userPosts = FakePosts.filter { it.author == user }
-                        PhotographerHeader(user = profileUiState.user, userPosts = profileUiState.content)
+                        PhotographerHeader(user = photographerDTO, userPosts = profileUiState.content)
                     }
                     val userPhotos = profileUiState.content.map { post -> post.photos }.flatten()
                     items(userPhotos) { photo ->
@@ -89,7 +98,7 @@ fun ProfileScreen(profileUiState: ProfileUiState ,goToHomeScreen: ()->Unit = {})
 @Composable
 fun ProfilePreview(@PreviewParameter(UserSampleProvider::class) user: Photographer) {
     PixieTheme {
-        ProfileScreen(userId = user.id)
+        ProfileScreen()
     }
 }
 
@@ -103,7 +112,7 @@ fun ProfilePreview1(@PreviewParameter(UserSampleProvider::class) user: Photograp
             content = emptyList(),
             users = emptyList(),
             error = null
-        ))
+        ), PhotographerDTOFromUser(user))
     }
 }
 
@@ -117,7 +126,7 @@ fun ProfilePreview12(@PreviewParameter(UserSampleProvider::class) user: Photogra
             content = emptyList(),
             users = emptyList(),
             error =  "Cannot load"
-        ))
+        ), PhotographerDTOFromUser(user))
     }
 }
 
@@ -131,6 +140,6 @@ fun ProfilePreview3(@PreviewParameter(UserSampleProvider::class) user: Photograp
             content = AllPosts.filter { it.author.id == user.id },
             users= AllUsers,
             error=null
-        ))
+        ), PhotographerDTOFromUser(user))
     }
 }

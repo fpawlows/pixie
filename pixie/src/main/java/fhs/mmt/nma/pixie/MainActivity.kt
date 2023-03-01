@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import fhs.mmt.nma.pixie.ui.home.*
 import fhs.mmt.nma.pixie.ui.profile.ProfileScreen
+import fhs.mmt.nma.pixie.ui.profile.ProfileViewModel
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 
 class MainActivity : ComponentActivity() {
@@ -55,15 +57,14 @@ fun PixieNavigation() {
                 navArgument("id") { type = NavType.IntType }
             )
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getInt("id");
+            val viewModel: ProfileViewModel = viewModel()
+            //val id = backStackEntry.arguments?.getInt("id");
 
-            if (id != null) {
-                ProfileScreen(
-                    goToHomeScreen = {
-                        navController.navigate(route = "home")
-                    }, userId = id
-                )
-            }
+            ProfileScreen(
+                goToHomeScreen = {
+                    navController.navigate(route = "home")
+                }
+            )
         }
     }
 }

@@ -24,7 +24,7 @@ import fhs.mmt.nma.pixie.ui.home.RoundUserImage
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PhotographerHeader(user: Photographer, userPosts: List<Post>) {
+fun PhotographerHeader(user: PhotographerDTO, userPosts: List<Post>) {
     val likesNumber: Int = userPosts.sumOf { post -> post.likes }
     val commentsNumber: Int = userPosts.sumOf { post -> post.comments.size }
     val photosNumber: Int = userPosts.sumOf { post -> post.photos.size }

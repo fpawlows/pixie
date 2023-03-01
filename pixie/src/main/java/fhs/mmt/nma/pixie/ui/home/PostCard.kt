@@ -44,6 +44,8 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import fhs.mmt.nma.pixie.data.*
+import fhs.mmt.nma.pixie.ui.profile.PhotographerDTO
+import fhs.mmt.nma.pixie.ui.profile.PhotographerDTOFromUser
 
 @Composable
 fun PostCard(post: Post, onUserIconClick: (Int) -> Unit = {}, onPostCardClick: (Post) -> Unit = {}) {
@@ -81,9 +83,13 @@ fun PhotographerHeader(onUserIconClick: (Int) -> Unit, post: Post) {
     }
 }
 
+@Composable
+fun RoundUserImage(user: Photographer, onUserIconClick: (Int) -> Unit, size: Dp) {
+    RoundUserImage(user = PhotographerDTOFromUser(user), onUserIconClick =onUserIconClick , size =size )
+}
 
 @Composable
-fun RoundUserImage(user: User, onUserIconClick: (Int) -> Unit, size: Dp) {
+fun RoundUserImage(user: PhotographerDTO, onUserIconClick: (Int) -> Unit, size: Dp) {
     IconButton(
         onClick = {
             onUserIconClick(user.id) },
