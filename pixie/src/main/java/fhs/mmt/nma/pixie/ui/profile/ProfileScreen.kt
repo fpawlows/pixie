@@ -1,6 +1,7 @@
 package fhs.mmt.nma.pixie.ui.profile
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -16,7 +17,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import fhs.mmt.nma.pixie.data.Photographer
+import fhs.mmt.nma.pixie.data.Post
 import fhs.mmt.nma.pixie.samples.AllPosts
+import fhs.mmt.nma.pixie.samples.AllUsers
 import fhs.mmt.nma.pixie.samples.providers.UserSampleProvider
 import fhs.mmt.nma.pixie.ui.home.PhotoAsync
 import fhs.mmt.nma.pixie.ui.home.footer
@@ -25,12 +28,18 @@ import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 
 
 @Composable
-fun ProfileScreen(goToHomeScreen: ()->Unit = {}, user: Photographer) {
+fun ProfileScreen(goToHomeScreen: ()->Unit = {}, userId: Int) {
     val viewModel: ProfileViewModel = viewModel()
-    viewModel.chooseUser(user)
     val state = viewModel.uiState.collectAsState().value
 
-    ProfileScreen(profileUiState = state, goToHomeScreen = goToHomeScreen)
+    if (!state.loading && state.error != null) {
+        val user = state.users.find { it.id == userId }
+        if (user != null) {
+            viewModel.chooseUser(user)
+        }
+
+        ProfileScreen(profileUiState = state, goToHomeScreen = goToHomeScreen)
+    }
 }
 
 
@@ -80,7 +89,7 @@ fun ProfileScreen(profileUiState: ProfileUiState ,goToHomeScreen: ()->Unit = {})
 @Composable
 fun ProfilePreview(@PreviewParameter(UserSampleProvider::class) user: Photographer) {
     PixieTheme {
-        ProfileScreen(user = user)
+        ProfileScreen(userId = user.id)
     }
 }
 
@@ -89,7 +98,7 @@ fun ProfilePreview(@PreviewParameter(UserSampleProvider::class) user: Photograph
 @Composable
 fun ProfilePreview1(@PreviewParameter(UserSampleProvider::class) user: Photographer) {
     PixieTheme {
-        ProfileScreen(profileUiState = ProfileUiState(loading = true, user =null, emptyList(), null))
+        ProfileScreen(profileUiState = ProfileUiState(loading = true, user =null, users = emptyList(), content = emptyList(), error = null))
     }
 }
 
@@ -98,7 +107,7 @@ fun ProfilePreview1(@PreviewParameter(UserSampleProvider::class) user: Photograp
 @Composable
 fun ProfilePreview12(@PreviewParameter(UserSampleProvider::class) user: Photographer) {
     PixieTheme {
-        ProfileScreen(profileUiState = ProfileUiState(loading = false, user =null, emptyList(), "Cannot load"))
+        ProfileScreen(profileUiState = ProfileUiState(loading = false, user =null, users = emptyList(), content = emptyList(), error =  "Cannot load"))
     }
 }
 
@@ -107,6 +116,6 @@ fun ProfilePreview12(@PreviewParameter(UserSampleProvider::class) user: Photogra
 @Composable
 fun ProfilePreview3(@PreviewParameter(UserSampleProvider::class) user: Photographer) {
     PixieTheme {
-        ProfileScreen(profileUiState = ProfileUiState(loading = false, content = AllPosts.filter { it.author.id == user.id }, user = user, error=null))
+        ProfileScreen(profileUiState = ProfileUiState(loading = false, content = AllPosts.filter { it.author.id == user.id }, users= AllUsers, user = user, error=null))
     }
 }

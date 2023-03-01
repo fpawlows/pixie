@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import fhs.mmt.nma.pixie.data.Post
 import fhs.mmt.nma.pixie.samples.AllPosts
+import fhs.mmt.nma.pixie.samples.AllUsers
 import fhs.mmt.nma.pixie.ui.theme.PixieTheme
 
 

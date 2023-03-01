@@ -125,7 +125,7 @@ fun PhotosDisplay(post: Post) {
         PhotoAsync(photo = photo)
     }
     if(pagerState.pageCount > 1) {
-        HorizontalPagerIndicator(pagerState = pagerState, modifier = Modifier
+        HorizontalPagerIndicator(pagerState = pagerState, activeColor = MaterialTheme.colors.secondary, modifier = Modifier
             .padding(top = 8.dp)
         )
     }

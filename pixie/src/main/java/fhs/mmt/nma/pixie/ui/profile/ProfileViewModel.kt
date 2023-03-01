@@ -10,6 +10,7 @@ import fhs.mmt.nma.pixie.data.Photography
 import fhs.mmt.nma.pixie.data.Post
 import fhs.mmt.nma.pixie.data.User
 import fhs.mmt.nma.pixie.samples.AllPosts
+import fhs.mmt.nma.pixie.samples.AllUsers
 import fhs.mmt.nma.pixie.samples.FakePosts
 import fhs.mmt.nma.pixie.ui.home.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,21 +20,37 @@ import kotlinx.coroutines.flow.update
 
 class ProfileViewModel(userId: Int) : ViewModel() {
     val uiState: MutableStateFlow<ProfileUiState> = MutableStateFlow(
-        ProfileUiState(loading = true, user =null, content = emptyList(), error = null)
+        ProfileUiState(loading = true, user =null, content = emptyList(), users = emptyList(), error = null)
     )
 
+    init {
+        uiState.update {
+            ProfileUiState(
+                loading = false,
+                content = emptyList(),
+                error = null,
+                users = AllUsers,
+                user=null)
+        }
+    }
+    fun chooseUser(user: Photographer) {
+        uiState.update { old -> old.copy(user=user, content = AllPosts.filter { post -> post.author.id == user.id}) }
+    }
+}
+/*
 //TODO change to init
     fun chooseUser(user: Photographer) {
         uiState.value = ProfileUiState(
             loading = false,
-            user = user,
             content = AllPosts.filter { post -> post.author.id == user.id},
-            error = null
+            error = null,
+            users = AllUsers,
+            user = user,
         )
     }
 
 }
-/*
+
 class ProfileViewModel(userId: Int) : ViewModel() {
     val uiState: MutableState<ProfileUiState> = mutableStateOf(
         ProfileUiState(loading = true, content = emptyList(), error = null)
@@ -65,6 +82,7 @@ data class ProfileUiState(
     val loading: Boolean,
     val user: Photographer?,
     val content: List<Post>,
+    val users: List<Photographer>,
     val error: String?)
 
 
