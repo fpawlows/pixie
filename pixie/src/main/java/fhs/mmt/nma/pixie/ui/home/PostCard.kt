@@ -44,6 +44,8 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import fhs.mmt.nma.pixie.data.*
+import fhs.mmt.nma.pixie.ui.profile.PhotographerDTO
+import fhs.mmt.nma.pixie.ui.profile.PhotographerDTOFromUser
 
 @Composable
 fun PostCard(post: Post, onUserIconClick: (Int) -> Unit = {}, onPostCardClick: (Post) -> Unit = {}) {
@@ -81,9 +83,13 @@ fun PhotographerHeader(onUserIconClick: (Int) -> Unit, post: Post) {
     }
 }
 
+@Composable
+fun RoundUserImage(user: Photographer, onUserIconClick: (Int) -> Unit, size: Dp) {
+    RoundUserImage(user = PhotographerDTOFromUser(user), onUserIconClick =onUserIconClick , size =size )
+}
 
 @Composable
-fun RoundUserImage(user: User, onUserIconClick: (Int) -> Unit, size: Dp) {
+fun RoundUserImage(user: PhotographerDTO, onUserIconClick: (Int) -> Unit, size: Dp) {
     IconButton(
         onClick = {
             onUserIconClick(user.id) },
@@ -118,12 +124,20 @@ fun PhotosDisplay(post: Post) {
     Column (
         horizontalAlignment = Alignment.CenterHorizontally
             ) {
+        Card {
+            HorizontalPager(count = post.photos.size, state = pagerState) { pageNr ->
+                val photo = post.photos[pageNr]
+                PhotoAsync(photo = photo)
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
 
-    HorizontalPager(count = post.photos.size, state = pagerState) { pageNr ->
-        val photo = post.photos[pageNr]
 
-        PhotoAsync(photo = photo)
-    }
+                NumeralPageIndicator(pagerState = pagerState)
+            }
+        }
     if(pagerState.pageCount > 1) {
         HorizontalPagerIndicator(pagerState = pagerState, activeColor = MaterialTheme.colors.secondary, modifier = Modifier
             .padding(top = 8.dp)
