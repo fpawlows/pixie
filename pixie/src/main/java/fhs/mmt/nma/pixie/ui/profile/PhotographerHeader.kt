@@ -90,7 +90,7 @@ fun PhotographerHeader(user: PhotographerDTO, userPosts: List<Post>) {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            if (user.location!=null) {
+
                 Surface(onClick = {}, color = MaterialTheme.colors.background.copy(alpha = 1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically)
                     {
@@ -103,24 +103,23 @@ fun PhotographerHeader(user: PhotographerDTO, userPosts: List<Post>) {
                         )
 
                         Text(
-                            text = user.location,
+                            text = user.location?: "",
                             color = MaterialTheme.colors.onSurface,
                             style = MaterialTheme.typography.body1
                         )
                     }
-                }
             }
 
-            if (user.instagram!=null) {
                 val context = LocalContext.current
                 Surface(onClick = {
+                    if (user.instagram!=null) {
+                        val instagramIntent = Intent()
+                        instagramIntent.action = Intent.ACTION_VIEW
+                        instagramIntent.data = Uri.parse("http://instagram.com/" + user.instagram);
+                        instagramIntent.setPackage("com.instagram.android");
 
-                    val instagramIntent = Intent()
-                    instagramIntent.action = Intent.ACTION_VIEW
-                    instagramIntent.data = Uri.parse("http://instagram.com/" + user.instagram);
-                    instagramIntent.setPackage("com.instagram.android");
-
-                    context.startActivity(instagramIntent)
+                        context.startActivity(instagramIntent)
+                    }
                 }, color = MaterialTheme.colors.background.copy(alpha = 1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically)
                     {
@@ -133,7 +132,7 @@ fun PhotographerHeader(user: PhotographerDTO, userPosts: List<Post>) {
                         )
 
                         Text(
-                            text = user.instagram,
+                            text = user.instagram?: "",
                             color = MaterialTheme.colors.onSurface,
                             style = MaterialTheme.typography.body1
                         )
@@ -141,6 +140,15 @@ fun PhotographerHeader(user: PhotographerDTO, userPosts: List<Post>) {
                 }
             }
 
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = user.bio, style = MaterialTheme.typography.body2)
+        }
         }
     }
-}
